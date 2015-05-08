@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+       <bean id="user1" class="javacourse.spring.ioc.beans.User">
+              <property name="id" value="1"/>
+              <property name="name" value="User1"/>
+              <property name="active" value="true"/>
+       </bean>
+
+       <bean id="user2" class="javacourse.spring.ioc.beans.User">
+              <property name="id" value="2"/>
+              <property name="name" value="User2"/>
+              <property name="active" value="false"/>
+       </bean>
+
+       <bean id="user3" class="javacourse.spring.ioc.beans.User">
+              <property name="id" value="3"/>
+              <property name="name" value="User3"/>
+              <property name="active" value="true"/>
+       </bean>
+       
+       <bean id="userList" class="java.util.ArrayList">
+              <constructor-arg>
+                     <list>
+                            <ref bean="user1"/>
+                            <ref bean="user2"/>
+                            <ref bean="user3"/>
+                     </list>
+              </constructor-arg>
+       </bean>
+
+       <bean id="daoBean" class="javacourse.spring.ioc.beans.DAO">
+              <property name="users" ref="userList"/>
+       </bean>       
+       
+       <bean id="blBean" class="javacourse.spring.ioc.beans.BL">
+              <property name="dao" ref="daoBean"/>
+       </bean> 
+       
+       <bean id="viewBean" class="javacourse.spring.ioc.beans.View">
+              <property name="bl" ref="blBean"/>
+       </bean> 
+
+</beans>
