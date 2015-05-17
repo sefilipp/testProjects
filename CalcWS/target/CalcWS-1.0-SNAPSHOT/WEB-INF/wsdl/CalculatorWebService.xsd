@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema xmlns:tns="http://test.ru/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
+           targetNamespace="http://test.ru/">
+
+    <xs:element name="sayAdd" type="tns:sayAdd"/>
+
+    <xs:element name="sayAddResponse" type="tns:sayAddResponse"/>
+
+    <xs:complexType name="sayAdd">
+        <xs:sequence>
+            <xs:element name="arg0" type="xs:int" minOccurs="1"/>
+            <xs:element name="arg1" type="xs:int" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="sayAddResponse">
+        <xs:sequence>
+            <xs:element name="return" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

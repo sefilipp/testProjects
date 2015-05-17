@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions
+        xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://test.ru/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/"
+        targetNamespace="http://test.ru/" name="CalculatorWebServiceService">
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://test.ru/"
+                        schemaLocation="CalculatorWebService.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="sayAdd">
+        <part name="parameters" element="tns:sayAdd"/>
+    </message>
+    <message name="sayAddResponse">
+        <part name="parameters" element="tns:sayAddResponse"/>
+    </message>
+    <portType name="CalculatorWebService">
+        <operation name="sayAdd">
+            <input wsam:Action="http://test.ru/CalculatorWebService/sayHelloRequest" message="tns:sayAdd"/>
+            <output wsam:Action="http://test.ru/CalculatorWebService/sayHelloResponse" message="tns:sayAddResponse"/>
+        </operation>
+    </portType>
+    <binding name="CalculatorWebServicePortBinding" type="tns:CalculatorWebService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="sayAdd">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="CalculatorWebServiceService">
+        <port name="CalculatorWebServicePort" binding="tns:CalculatorWebServicePortBinding">
+            <soap:address location="http://gsru0014:8080/CalculatorWebServiceService/CalculatorWebService"/>
+        </port>
+    </service>
+</definitions>
