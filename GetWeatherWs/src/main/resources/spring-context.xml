@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+        xmlns="http://www.springframework.org/schema/integration"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+        xmlns:mail="http://www.springframework.org/schema/integration/mail"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                            http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+                            http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws.xsd
+                            http://www.springframework.org/schema/integration/xml http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                            http://www.springframework.org/schema/integration/mail http://www.springframework.org/schema/integration/mail/spring-integration-mail.xsd">
+
+    <channel id="inputChannel"/>
+    <channel id="wsChannel"/>    
+    <channel id="wsOutputChannel"/>  
+    <channel id="marshOutputChannel"/>  
+    <channel id="htmlOutputChannel"/>  
+    <publish-subscribe-channel id="transformOutputChannel"/> <!-- это было сделано для вывода логов
+                                                                  чтобы в разные места передавать рузультаты
+                                                                  решил пока оставить -->
+    <channel id="mailChannel"/>   
+
+    <int-ws:header-enricher input-channel="inputChannel" output-channel="wsChannel">
+        <int-ws:soap-action value="http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP"/>
+    </int-ws:header-enricher>
+
+    <beans:bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <beans:property name="packagesToScan" value="globalweather"/>
+    </beans:bean>
+
+    <int-ws:outbound-gateway id="marshallingGateway"
+                             request-channel="wsChannel"
+                             reply-channel="wsOutputChannel"
+                             uri="http://wsf.cdyne.com/WeatherWS/Weather.asmx"
+                             marshaller="marshaller"
+                             unmarshaller="marshaller"/> 
+    <!-- 
+    в wsChannel будет лежать объект запроса к веб-сервису
+    а в wsOutputChannel будет уже готовый объект с ответом,
+    а нам нужна "сырая" xml с ответом. 
+    Есть подозрения, что это можно сделать с помощью marshallingGateway,
+    ведь мы ему передаем marshaller и unmarshaller,
+    но не смог так сделать...(
+    
+    поэтому преобразовал через int-xml:marshalling-transformer
+    -->
+    
+    <beans:bean id="weatherRequest" class="globalweather.GetCityWeatherByZIP">
+        <beans:property name="ZIP" value="80010"/>
+    </beans:bean>
+    
+    <int-xml:marshalling-transformer input-channel="wsOutputChannel"
+                                     output-channel="marshOutputChannel"
+                                     marshaller="marshaller"
+                                     result-type="StringResult"/>
+    
+    <!--
+    int-xml:marshalling-transformer вернул StringResult,
+    а нам нужен просто String, поэтому прогнал через трансформер
+    -->
+    
+    <transformer input-channel="marshOutputChannel"
+                 output-channel="transformOutputChannel"
+                 expression="payload.toString()"/>
+    
+    <!--
+    а замет уже скормили xslt-трансформеру    
+    -->
+    
+    <int-xml:xslt-transformer id="xsltTransformerWithResource"
+                              input-channel="transformOutputChannel" 
+                              output-channel="htmlOutputChannel"
+                              xsl-resource="example.xsl"/>
+    
+    <!--
+    Если в наш mail:header-enricher приходит строка (наш случай),
+    то эта строка вставляется в тело письма.
+    А нам, я думаю, нужно приаттачить html-ку к письму
+    Вот теперь думаю как это сделать...
+    Опять через трансформер прогонять...?(((
+    -->
+    
+    <mail:header-enricher input-channel="htmlOutputChannel" output-channel="mailChannel">
+        <mail:from value="sedelnikov.fm@gmail.com"/>
+        <mail:to value="sefilipp@mail.ru"/>
+        <mail:subject value="Погода"/>               
+    </mail:header-enricher>
+    
+    <mail:outbound-channel-adapter host="smtp.gmail.com" 
+                                   java-mail-properties="mailProperties" 
+                                   username="sedelnikov.fm" 
+                                   password="не скажу" 
+                                   channel="mailChannel"/>
+
+    <util:properties id="mailProperties">
+        <beans:prop key="mail.smtp.starttls.enable">true</beans:prop>
+        <beans:prop key="mail.smtp.starttls.required">true</beans:prop>
+    </util:properties>
+    
+    <beans:bean id="logger" class="ru.test.getweatherws.Logger"/>
+    
+    <!--
+    ну и наговнокодил я тут...
+    потраченное время 4 часа
+    -->
+
+</beans:beans>
