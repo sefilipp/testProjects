@@ -1,0 +1,4 @@
+ru\test\market\model\Customer.class
+ru\test\market\model\CashBox.class
+ru\test\market\bl\Manager.class
+ru\test\market\servlets\MarketServlet.class
