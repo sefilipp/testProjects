@@ -34,7 +34,7 @@ public class MarketServlet extends HttpServlet {
                     out.write("<p>");
                     out.write("<h3>");
                     out.write("Шаг №");
-                    out.write(Integer.toString(i));
+                    out.write(Integer.toString(i+1));
                     out.write("</h3>");
                     out.write("</p>");
                     out.write(manager.getHtmlStepRepresentation());

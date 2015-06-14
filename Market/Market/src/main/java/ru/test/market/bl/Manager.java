@@ -172,9 +172,24 @@ public class Manager
             htmlStep.append("<td>Производительность:").append(cash.getPerfomance()).append("</td>");
             htmlStep.append(customersGoods);
             htmlStep.append("</tr>");
-            htmlStep.append("</table>");     
+            
+            htmlStep.append("<tr>");
+            htmlStep.append("<td>Обработано.");
+            htmlStep.append("</tr>");
+            
+            htmlStep.append("<tr>");
+            htmlStep.append("<td>Товаров:").append(cash.getDoneGoods()).append("</td>");
+            htmlStep.append("</tr>");
+            
+            htmlStep.append("<tr>");
+            htmlStep.append("<td>Клиентов:").append(cash.getDoneCustomers()).append("</td>");
+            htmlStep.append("</tr>");
+            
+            htmlStep.append("</table>");             
             
         }       
+        
+        htmlStep.append("<hr>");
         
         return htmlStep.toString();
     }   
