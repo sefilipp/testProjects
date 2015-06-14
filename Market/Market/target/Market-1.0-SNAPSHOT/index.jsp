@@ -12,6 +12,11 @@
             Количетво касс: <input type="text" name="cashboxes"> <br/>
             Количетво шагов: <input type="text" name="steps"> <br/>
             <input type="submit" name="submit" />
+            Процентный состав покупателей. <br/>
+            (если оставить пустым, то тип нового покупателя будет выбираться случайным образом)<br/>
+            Мужчин (%): <input type="text" name="man"> <br/>
+            Женщин (%): <input type="text" name="woman"> <br/>
+            Детей  (%): <input type="text" name="child"> <br/>            
         </form>       
         
     </body>

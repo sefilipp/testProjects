@@ -8,9 +8,16 @@ import ru.test.market.model.Customer;
 public class Manager 
 {
     private final int MAX_CASHBOX_PERFOMANCE = 10;
+    private final int MAX_CUSTOMER_GOODS = 50;
     
     private List<CashBox> cashList;      
     private Customer newCustomer;   
+    
+    private int man_percent;
+    private int woman_percent;
+    private int child_percent;
+    
+    private boolean autoType = true;
     
     
     public Manager(int cashBoxCount)
@@ -42,10 +49,30 @@ public class Manager
     private Customer createNewCustomer()
     {        
         char type;
-        int index = (int)Math.round(Math.random()*2);
-        switch (index) 
+        
+        if (autoType) 
+        {        
+            type = getAutoType();
+        }
+        else 
         {
-            case 0: 
+            type = getBalancedType();
+        }
+        
+        int perfomance = (int)Math.round(Math.random()*MAX_CUSTOMER_GOODS);  
+        
+        if (newCustomer != null)
+            newCustomer.setNewCustomer(false);
+        
+        newCustomer = new Customer(type, perfomance);
+        return newCustomer;
+    }
+    
+    private char getAutoType() {
+        char type;
+        int index = (int) Math.round(Math.random() * 2);
+        switch (index) {
+            case 0:
                 type = Customer.TYPE_CHILD;
                 break;
             case 1:
@@ -55,16 +82,28 @@ public class Manager
                 type = Customer.TYPE_WOMAN;
                 break;
             default:
-                type = Customer.TYPE_MAN;                
-        }   
+                type = Customer.TYPE_MAN;
+        }
+
+        return type;
+    }
+    
+    /*
+        Данный метод не совсем корректно производит балансировку 
+        процентного состава покупателей, точнее он ее не производит, 
+        а только задает вероятность появление того или иного типа,
+        если положить, что функция random() использует равномерное распределение :)       
+    */
+    private char getBalancedType() 
+    {            
+        int index = (int) Math.round(Math.random() * 100);
         
-        int perfomance = (int)Math.round(Math.random()*50);  
+        if (index <= man_percent) return Customer.TYPE_MAN;
+        if (index <= (man_percent + woman_percent)) return Customer.TYPE_WOMAN;
+        if (index <= (man_percent + woman_percent + child_percent)) return Customer.TYPE_CHILD;
         
-        if (newCustomer != null)
-            newCustomer.setNewCustomer(false);
+        return Customer.TYPE_CHILD;               
         
-        newCustomer = new Customer(type, perfomance);
-        return newCustomer;
     }
 
     private void choseCashBox(Customer customer) 
@@ -194,4 +233,12 @@ public class Manager
         return htmlStep.toString();
     }   
 
+    public void addPercentBalance(int man, int woman, int child) {
+        
+        autoType = false;
+        
+        this.man_percent = man;
+        this.woman_percent = woman;
+        this.child_percent = child;
+    }  
 }

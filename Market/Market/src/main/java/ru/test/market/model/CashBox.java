@@ -76,7 +76,7 @@ public class CashBox
             {                
                 doneCustomers++;
                 doneGoods += customers.get(0).getGoodsQty();
-                customers.remove(0);
+                customers.remove(0);                
             }                                
         }        
     } 
