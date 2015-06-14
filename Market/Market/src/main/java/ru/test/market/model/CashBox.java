@@ -41,6 +41,10 @@ public class CashBox
     {
         return customers.size();
     }
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }    
     
     public int getQueueSteps()
     {

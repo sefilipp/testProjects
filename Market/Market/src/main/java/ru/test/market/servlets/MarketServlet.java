@@ -24,16 +24,23 @@ public class MarketServlet extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 out.write("<html>");
                 out.write("<head>");
-                out.write("<title>Servlet HelloWorld</title>");
+                out.write("<title>Результат</title>");
                 out.write("</head>");
-                out.write("<body>");
-                out.write("<h1>Servlet HelloWorld for Java course</h1>");
+                out.write("<body>");                
 
                 for (int i = 0; i < steps; i++) {
                     manager.doStep();
 
-                    out.write("<div>");
-                    out.write("</div>");
+                    out.write("<p>");
+                    out.write("<h3>");
+                    out.write("Шаг №");
+                    out.write(Integer.toString(i));
+                    out.write("</h3>");
+                    out.write("</p>");
+                    out.write(manager.getHtmlStepRepresentation());
+                    
+                    
+                    //
 
                 }
 

@@ -129,5 +129,54 @@ public class Manager
         }        
         
         return index;
-    }    
+    }
+    
+    public String getHtmlStepRepresentation(){
+        
+        StringBuilder htmlStep = new StringBuilder();
+        
+        for (CashBox cash : cashList){
+
+            htmlStep.append("<table>");
+            htmlStep.append("<tr>");
+            htmlStep.append("<td><img src=\"images/cashbox.png\" alt=\"cashbox\"/></td>");    
+            
+            StringBuilder customersGoods = new StringBuilder();
+            for (Customer customer : cash.getCustomers()) {
+                switch (customer.getType()) {
+                    case Customer.TYPE_CHILD:  
+                        if (customer.isNewCustomer())
+                            htmlStep.append("<td><img src=\"images/new_child.png\" alt=\"cashbox\"/></td>"); 
+                        else
+                            htmlStep.append("<td><img src=\"images/child.png\" alt=\"cashbox\"/></td>"); 
+                        break;
+                    case Customer.TYPE_MAN:
+                       if (customer.isNewCustomer())
+                            htmlStep.append("<td><img src=\"images/new_man.png\" alt=\"cashbox\"/></td>"); 
+                        else
+                            htmlStep.append("<td><img src=\"images/man.png\" alt=\"cashbox\"/></td>"); 
+                        break;
+                    case Customer.TYPE_WOMAN:
+                        if (customer.isNewCustomer())
+                            htmlStep.append("<td><img src=\"images/new_woman.png\" alt=\"cashbox\"/></td>"); 
+                        else
+                            htmlStep.append("<td><img src=\"images/woman.png\" alt=\"cashbox\"/></td>"); 
+                        break;
+                }   
+                
+                customersGoods.append("<td>Товары:").append(customer.getGoodsQty()).append("</td>");
+            }
+            
+            htmlStep.append("</tr>");
+            htmlStep.append("<tr>");
+            htmlStep.append("<td>Производительность:").append(cash.getPerfomance()).append("</td>");
+            htmlStep.append(customersGoods);
+            htmlStep.append("</tr>");
+            htmlStep.append("</table>");     
+            
+        }       
+        
+        return htmlStep.toString();
+    }   
+
 }
